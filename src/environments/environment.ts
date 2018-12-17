@@ -3,7 +3,23 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+
+  firebaseConfig: {
+    apiKey: "AIzaSyDlIj_HqSwXObsorXEHRg_7G52N2RJbZno",
+    authDomain: "simplemobility-2810.firebaseapp.com",
+    databaseURL: "https://simplemobility-2810.firebaseio.com",
+    projectId: "simplemobility-2810",
+    storageBucket: "simplemobility-2810.appspot.com",
+    messagingSenderId: "722251902258"
+  },
+// http://localhost:5000
+functionsURL: ' http://localhost:5000/simplemobility-2810/us-central1',
+// functionsURL: 'https://us-central1-stripe-elements.cloudfunctions.net',
+
+stripePublishable: 'pk_test_L9Be7aZnAWo0ZWtY8SkT8MuI'
+
+
 };
 
 /*

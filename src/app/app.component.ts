@@ -1,10 +1,20 @@
 import { Component } from '@angular/core';
+import { DbService } from './core/data/firestore.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: '<router-outlet></router-outlet>',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'smweb';
+  
+  constructor(private db: DbService) {
+  //  this.getUsers();
+  }
+  getUsers = async ()=> {
+    this.db.getUsers();
+       
+   }
+  
+
 }

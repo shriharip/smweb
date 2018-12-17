@@ -1,0 +1,33 @@
+<!-- 
+
+  <form [formGroup]="paymentForm" (ngSubmit)="payHandler()">
+      <div class="form-row">
+      <label for="card-info">Payment Summary</label>
+
+      <div id="card-element" #cardElement></div>
+      <div id="card-errors" class="help is-danger" role="alert" *ngIf="formError">{{ formError }}</div>
+      </div>
+
+      <div >
+          
+  <button type="submit" 
+  class="button is-info" 
+  [disabled]="!formComplete || loading"
+  [class.is-loading]="loading">
+
+Pay {{ totalAmount | stripe | currency }}
+
+</button>
+
+<div *ngIf="result?.id" class="notification is-success">
+{{ result.id }} has a status of {{ result.status }} for {{ result.amount | stripe | currency }}
+</div>  
+
+ If error, show the user the raw error msg from Stripe 
+<div *ngIf="result?.error" class="notification is-danger">
+{{ result.error?.message }}
+</div>  
+      </div>
+  </form> -->
+
+

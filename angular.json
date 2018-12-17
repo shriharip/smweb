@@ -27,7 +27,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "./src/app/theme/styles/styles.scss",
+              "../smweb/node_modules/@nebular/theme/styles/prebuilt/default.css",
+              "../smweb/node_modules/bootstrap/dist/css/bootstrap.css",
+              "../smweb/node_modules/@nebular/bootstrap/styles/prebuilt/corporate.css",
+              "../smweb/node_modules/nebular-icons/scss/nebular-icons.scss"
             ],
             "scripts": []
           },
@@ -61,7 +65,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "smweb:build"
+            "browserTarget": "smweb:build",
+            "proxyConfig": "src/proxy.config.json"
           },
           "configurations": {
             "production": {

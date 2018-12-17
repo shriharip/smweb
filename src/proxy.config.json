@@ -1,0 +1,10 @@
+{
+    "/api": {
+      "target": "https://avoindata.prh.fi/bis/v1/",
+      "secure": false,
+      "pathRewrite": {
+        "^/api": ""
+      },
+      "changeOrigin": true
+    }
+  }
