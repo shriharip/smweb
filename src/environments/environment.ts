@@ -14,7 +14,7 @@ export const environment = {
     messagingSenderId: "722251902258"
   },
 // http://localhost:5000
-functionsURL: ' http://localhost:5000/simplemobility-2810/us-central1',
+functionsURL: 'https://us-central1-simplemobility-2810.cloudfunctions.net/app',
 // functionsURL: 'https://us-central1-stripe-elements.cloudfunctions.net',
 
 stripePublishable: 'pk_test_L9Be7aZnAWo0ZWtY8SkT8MuI'

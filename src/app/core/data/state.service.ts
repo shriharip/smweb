@@ -3,7 +3,7 @@ import { of as observableOf,  Observable,  BehaviorSubject, throwError } from 'r
 import { takeWhile } from 'rxjs/operators';
 import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, retry } from 'rxjs/operators';
-
+import { LocalStorage } from '@ngx-pwa/local-storage';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -11,14 +11,14 @@ const httpOptions = {
   })
 };
 
-//const companyApiURL = 'https://avoindata.prh.fi/bis/v1/';
+// const companyApiURL = 'https://avoindata.prh.fi/bis/v1/';
 const baseURL = '/api'
 
 @Injectable()
 export class StateService implements OnDestroy {
 
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, protected storage:LocalStorage) {
 
   }
   
@@ -32,6 +32,17 @@ export class StateService implements OnDestroy {
   );
   }
 
+  setStorage(key:string, data:any) {
+   return this.storage.setItem(key, data);
+  }
+  
+  getStorage(key:string) {
+    return this.storage.getItem(key);
+  }
+
+  deleteStorage(key:string) {
+   return this.storage.removeItem(key);
+  }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.

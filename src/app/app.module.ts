@@ -33,6 +33,9 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 
 //Stripe related
 import {PaymentService} from './payment/payment.service'
+
+import { TokenInterceptor } from './core/token.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -51,7 +54,8 @@ import {PaymentService} from './payment/payment.service'
     AngularFireModule.initializeApp(environment.firebaseConfig), AngularFirestoreModule, AngularFireAuthModule,
   ],
   providers: [
-    AuthGuard, AuthService, PaymentService
+    AuthGuard, AuthService, PaymentService,
+    {  provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

@@ -1,94 +1,97 @@
 import * as functions from 'firebase-functions';
 import * as helpers from './helpers';
-import * as connect from './connect';
 import { app } from './config';
-import {createStripeCustomer } from './auth'
 
 // POST Charge
-app.post('/charges', (req, res) => {
+// app.post('/charges', (req, res) => {
 
-    const userId   = req.user.uid;
-    const sourceId = req.body.sourceId;
-    const amount   = req.body.amount;
-    const currency = req.body.currency;
+//     const userId   = req.user.uid;
+//     const sourceId = req.body.sourceId;
+//     const amount   = req.body.amount;
+//     const currency = req.body.currency;
 
-    const promise = helpers.createCharge(userId, sourceId, amount, currency)
-    defaultHandler(promise, res)
-});
+//     const promise = helpers.createCharge(userId, sourceId, amount, currency)
+//     defaultHandler(promise, res)
+// });
 
 // GET User Charges
-app.get('/charges', (req, res) => {
+// app.get('/charges', (req, res) => {
     
-    const userId   = req.user.uid;
-
-    const promise = helpers.getUserCharges(userId)
-    defaultHandler(promise, res)
-});
+//     const userId   = req.user.uid;
+//     const companyData  = req.body.companyRef;
+//     const promise = helpers.getUserCharges(userId, companyData)
+//     defaultHandler(promise, res)
+// });
 
 
 // POST sources
 app.post('/sources', (req, res) => {
     
     const userId    = req.user.uid;
+    const companyData  = req.body.companyRef;
     const sourceId  = req.body.sourceId;
 
-    const promise = helpers.attachSource(userId, sourceId)
+    const promise = helpers.attachSource(userId, sourceId, companyData)
     defaultHandler(promise, res)
     
 });
 
 // GET customer (includes source and subscription data)
-app.get('/customer', (req, res) => {
+// app.get('/customer', (req, res) => {
     
-    const userId   = req.user.uid;
-
-    const promise = helpers.getCustomer(userId)
-    defaultHandler(promise, res)
+//     const userId   = req.user.uid;
+//     const companyData  = req.body.companyRef;
     
-});
+//     const promise = helpers.getCustomer(userId, companyData)
+//     defaultHandler(promise, res)
+    
+// });
 
 app.post('/customer', (req, res) => {
-    
+        
     const userId   = req.user.uid;
-    const promise  = createStripeCustomer(userId);
+    const companyData  = req.body.companyRef;
+
+    const promise  = helpers.createCustomer(userId, companyData);
  
     defaultHandler(promise, res)
     
 });
 
 // POST subscriptions (creates subscription on user account)
-app.post('/subscriptions', (req, res) => {
+// app.post('/subscriptions', (req, res) => {
     
-    const userId   = req.user.uid;
-    const sourceId = req.body.sourceId;
-    const planId   = req.body.planId;
+//     const userId   = req.user.uid;
+//     const sourceId = req.body.sourceId;
+//     const planId   = req.body.planId;
+//     const companyData  = req.body.companyRef;
+//     const promise = helpers.createSubscription(userId, sourceId, planId, companyData);
 
-    const promise = helpers.createSubscription(userId, sourceId, planId);
-
-    defaultHandler(promise, res)
-});
+//     defaultHandler(promise, res)
+// });
 
 app.post('/order', (req, res) => {
     
     const userId   = req.user.uid; 
     const ticketType   = req.body.ticketType;
     const amount = req.body.amount;
+    const companyData  = req.body.companyRef;
 
-    const promise = helpers.orderTicket(userId, amount, ticketType);
+    const promise = helpers.orderTicket(userId, amount, ticketType, companyData);
 
     defaultHandler(promise, res)
 });
 
 // PUT subscriptions (cancels subscription)
-app.put('/subscriptions/cancel', (req, res) => {
+// app.put('/subscriptions/cancel', (req, res) => {
     
-    const userId   = req.user.uid;
-    const planId   = req.body.planId;
+//     const userId   = req.user.uid;
+//     const planId   = req.body.planId;
+//     const companyData  = req.body.companyRef;
+//     const promise = helpers.cancelSubscription(userId, planId, companyData);
 
-    const promise = helpers.cancelSubscription(userId, planId);
-
-    defaultHandler(promise, res)
-});
+//     defaultHandler(promise, res)
+// });
 
 
 // Default handling of response

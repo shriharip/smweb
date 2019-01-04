@@ -11,7 +11,7 @@ import { Customer, Source, Charge, SubscriptionPlan, StripeObject } from './mode
 @Injectable()
 export class PaymentService {
 
-  readonly api = `${environment.functionsURL}/app`;
+  readonly api = `${environment.functionsURL}`;
 
   private stripe = Stripe(environment.stripePublishable);
   elements: any;
@@ -19,6 +19,14 @@ export class PaymentService {
   constructor(private http: HttpClient) {
     this.elements = this.stripe.elements()
   }
+///create customer
+
+createCustomer(companyData: any) {
+  const url = `${this.api}/customer/`;
+
+  return this.http.post(url, {companyRef: companyData});
+}
+
 
   ///// RETRIEVE DATA ////
 
@@ -51,12 +59,12 @@ export class PaymentService {
   }
 
   // Saves a payment source to the user account that can be charged later
-  attachSource(card: any): Observable<Source> {
+  attachSource(card: any, companyData): Observable<Source> {
     const url = `${this.api}/sources/`;
     
     return from<Source>( this.stripe.createSource(card) ).pipe(
       switchMap(data => {
-        return this.http.post<Source>(url, { sourceId: data.source.id })
+        return this.http.post<Source>(url, { sourceId: data.source.id, companyRef: companyData })
       })
     )
   }

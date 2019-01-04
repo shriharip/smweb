@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 
 import { MENU_ITEMS } from './pages-menu';
 import {DbService} from './../core/data/firestore.service';
 import { AuthService} from './../auth/auth.service';
-
-import { Router } from '@angular/router';
+import { StateService } from './../core/data/state.service'
+import { Router, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs/';
-import { tap, map, take, first } from 'rxjs/operators';
+import { tap, map, take, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-pages',
   template: `
-  <div *ngIf="!show"> 
+  <div > 
   <nb-card [nbSpinner]="true" nbSpinnerSize="xxlarge">
 </nb-card>
   </div>
-  <div *ngIf="show">
+  <div>
   <ngx-sample-layout>
 
   <nb-menu [items]="menu"> </nb-menu>
@@ -26,48 +26,42 @@ import { tap, map, take, first } from 'rxjs/operators';
 
   `,
 })
-export class PagesComponent {
+export class PagesComponent implements AfterViewInit {
  
 
   ismenu = true;
   menu = MENU_ITEMS;
  protected show: boolean = false;
-  constructor(private db: DbService, private auth: AuthService, private router: Router) { 
-    // this.auth.account$.pipe( 
-    //   map(account => account.uid), 
-    //   map(uid => { this.db.doc$(`users/${uid}`).pipe(
-    //     map(({onboard})=> {
-    //       if (onboard){
-    //         this.router.navigate(['onboard'])
-    //       }
-    //     })
-    //   ) })
-    // )
+  constructor(private db: DbService, private auth: AuthService, private router: Router, 
+    protected state:StateService) { 
+
    
     if(this.router.url.indexOf('onboard') > 0) {
       this.ismenu = false;
     }
     console.log(this.ismenu);
-    this.auth.account$.subscribe( account => {
-      let uid = account.uid; 
-      this.db.doc$(`users/${uid}`).subscribe(doc => {
-        if (doc.onboard){
-          this.show = true;
-          this.router.navigate(['pages/onboard', uid])
-        }else{
-          this.show = true;
-        }
-      }) 
-    //   map(doc => {
-    //     if (doc['data']) {
 
-    //       if (doc['data'].onboard) {
-    //         this.router.navigate(['onboard'])
-    //       }
-    //     }
-    //   }),
-    //   )
-    // });
+    this.router.events.pipe( 
+    filter(event=> event instanceof NavigationStart)).subscribe((event:NavigationStart)=>{
+     // TODO
+     this.show = false;
+     this.redirectToOnboard();
   })
+}
+redirectToOnboard() {
+//  this.auth.user.subscribe(data=> { 
+//    if(!data.isOnBoarded) {  
+//    this.show = true;
+//    this.router.navigate(['pages/onboard'])
+//   }
+// })
+let isOnBoarded = localStorage.getItem("isOnBoarded");
+if(isOnBoarded && isOnBoarded == 'false') this.router.navigate(['pages/onboard'])
+}
+
+ngAfterViewInit(): void {
+  //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+  //Add 'implements AfterViewInit' to the class.
+  this.show = true;
 }
 }

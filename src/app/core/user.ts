@@ -3,14 +3,15 @@ export interface User {
     email: string;
     photoURL?: string;
     displayName?: string;
+    role?: string;
+    isOnBoarded?: boolean;
     stripeCustomerId?: string;
     subscriptions?: {
       [key: string]: 'active' | 'pastDue' | 'cancelled';
     }
-
-    // for Stripe Connect
     accountId?: string;
     refreshToken?: string;
     company?:string
-    role?: string
-  }
+    createdAt?: any, 
+      updatedAt?: any
+    }

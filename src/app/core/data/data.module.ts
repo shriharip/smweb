@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { DbService } from './firestore.service'
  
 import { StateService } from './state.service';
-
+import { CanDeactivateGuard } from '../can-deactivate.gaurd'
 const SERVICES = [
 
   StateService,
   DbService,
+  CanDeactivateGuard
 ];
 
 @NgModule({

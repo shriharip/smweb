@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { getDeepFromObject } from '@nebular/auth/helpers';
 import { NB_AUTH_OPTIONS, NbAuthSocialLink } from '@nebular/auth';
-
+import { StateService } from './../../core/data/state.service'
 
 
 @Component({
@@ -13,7 +13,7 @@ import { NB_AUTH_OPTIONS, NbAuthSocialLink } from '@nebular/auth';
 })
 export class RegisterComponent {
 
-  redirectDelay: number = 0;
+
   showMessages: any = {};
 
   submitted = false;
@@ -25,30 +25,37 @@ export class RegisterComponent {
 
   constructor(protected auth: AuthService,
     @Inject(NB_AUTH_OPTIONS) protected config = {},
-    protected router: Router) {
+    protected router: Router, protected state: StateService) {
 
-    this.redirectDelay = this.getConfigValue('forms.register.redirectDelay');
+   // this.redirectDelay = this.getConfigValue('forms.register.redirectDelay');
     this.showMessages = this.getConfigValue('forms.register.showMessages');
     this.socialLinks = this.getConfigValue('forms.register.socialLinks');
 
     this.validation = this.getConfigValue('forms.validation');
   }
 
-  register(): void {
+  register = async () => {
     this.errors = this.messages = [];
     this.submitted = true;
 
-    this.auth.register(this.user.email, this.user.password, this.user.fullName, this.user.company)
-      .then(() => {
-        this.submitted = false;
+    try {
+      const user =  await this.auth.register(this.user.email, this.user.password, this.user.fullName, this.user.company)
+      
+      this.submitted = false;
         this.messages = [];
-
-        this.redirectToDashboard()
-      })
-      .catch((err) => {
-        this.submitted = false;
+        // try {
+        //   await this.state.setStorage('isOnBoarded', 'false');
+        //  this.redirectToOnboard(user.uid)
+        // } catch (error) {
+        //   console.log( 'setStorage error', error)
+        // }
+        localStorage.setItem("isOnBoarded", "false");
+        this.redirectToOnboard()
+       } catch (err) {
+      this.submitted = false;
         this.errors = [err];
-      });
+    }
+      
   }
 
   // loginSocial(name) {
@@ -81,10 +88,9 @@ export class RegisterComponent {
   //     });
   // }
 
-  redirectToDashboard() {
-    setTimeout(() => {
-      this.router.navigate(['/pages/dashboard']);
-    }, this.redirectDelay);
+  redirectToOnboard() {
+      this.router.navigate([ '/pages/onboard/']);
+
   }
 
   getConfigValue(key: string): any {

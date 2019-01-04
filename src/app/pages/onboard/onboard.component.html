@@ -1,80 +1,79 @@
-
-  <div class="steppers-container row">
-    <h1>Welcome Onboard!, Let's get you started!</h1>
-      <div class="col-12">
-        <nb-card class="col-md-12 col-lg-12 col-xxxl-12">
-            <nb-card-body>
-              <nb-stepper #stepper orientation='horizontal' class='horizontal'>
-                <nb-step [stepControl]="companyForm" label="First step">
-                  <form [formGroup]="companyForm" (ngSubmit)="onFirstSubmit()" class="step-container">
-                    <p class="lorem">What is your Company Registration Number?</p>
+<div class="steppers-container row">
+  <h1>Welcome Onboard!, Let's get you started!</h1>
+    <div class="col-12">
+      <nb-card class="col-md-12 col-lg-12 col-xxxl-12">
+          <nb-card-body>
+            <nb-stepper #stepper orientation='horizontal' class='horizontal'>
+              <nb-step [stepControl]="companyForm" label="First step">
+                <form [formGroup]="companyForm"  class="step-container">
+                  <p class="lorem">What is your Company Registration Number?</p>
+                  <div class="input-group input-group-sm">
+                       <input type="text" placeholder="Registration number" aria-label="Registration Number" aria-describedby="cbutton" class="form-control" formControlName="id"
+                           [ngClass]="{'form-control-danger': companyForm.controls.id.invalid && (companyForm.controls.id.dirty || companyForm.controls.id.touched)}">
+                           <div class="input-group-append">
+                           <!-- <button class="btn btn-outline-secondary" type="button" id="cbutton" (click)="getCompany()">Submit</button> -->
+                          </div> 
+                          </div>  
+                 
+                    <!-- <p>Please Confirm if below information is correct? If not, make changes.</p> -->
                     <div class="input-group input-group-sm">
-                         <input type="text" placeholder="Registration number" aria-label="Registration Number" aria-describedby="cbutton" class="form-control" formControlName="id"
-                             [ngClass]="{'form-control-danger': companyForm.invalid && (companyForm.dirty || companyForm.touched)}">
-                             <div class="input-group-append">
-                             <button class="btn btn-outline-secondary" type="button" id="cbutton" (click)="getCompany()">Submit</button> </div>
-                    </div>  
-                    <div *ngIf="isCompVisible">  
-                      <p>Please Confirm if below information is correct? If not, make changes.</p>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">Company Name</span>
+                        </div>
+                    <input type="text" placeholder="Company Name" class="form-control" formControlName="name"
+                           [ngClass]="{'form-control-danger': companyForm.controls.name.invalid && (companyForm.controls.name.dirty || companyForm.controls.name.touched)}">
+                      </div>
                       <div class="input-group input-group-sm">
                           <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Company Name</span>
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Company Address</span>
                           </div>
-                      <input type="text" placeholder="Company Name" class="form-control" formControlName="name"
-                             [ngClass]="{'form-control-danger': companyForm.invalid && (companyForm.dirty || companyForm.touched)}">
-                        </div>
-                        <div class="input-group input-group-sm">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text" id="inputGroup-sizing-sm">Company Address</span>
-                            </div>
-                             <input type='text' placeholder="Company Address" class="form-control" formControlName="address"
-                             [ngClass]="{'form-control-danger': companyForm.invalid && (companyForm.dirty || companyForm.touched)}">
-                          </div>   
-                       <button nbButton nbStepperNext>next</button>
-                      </div>
-                  </form>
-                </nb-step>
-                <nb-step [stepControl]="secondForm" label="Second step">
-                  <form [formGroup]="secondForm" (ngSubmit)="onSecondSubmit()" class="step-container">
-                    <p class="lorem">
-                     <strong> Please enter Card details.</strong> 
-                      This card will be charged when users take ride for company purposes.
-                    </p>
-                    <div id="card-element" #cardElement></div>
-                    <div id="card-errors" class="help is-danger" role="alert" *ngIf="formError">{{ formError }}</div>
-                    <button type="submit"  class="button is-info" [disabled]="!formComplete || loading" [class.is-loading]="loading"> Save Card
-                    </button>
-                    <!-- <div *ngIf="result?.error" class="notification is-danger">
-                      {{ result.error?.message }}
-                  </div>  -->
-                    <div class='mt-5'>
-                    <button nbButton nbStepperPrevious>prev</button>
-                    <button nbButton nbStepperNext>Confirm</button>
+                           <input type='text' placeholder="Company Address" class="form-control" formControlName="address"
+                           [ngClass]="{'form-control-danger': companyForm.controls.address.invalid && (companyForm.controls.address.dirty || companyForm.controls.address.touched)}">
+                        </div>   
+                     <button (click)="onFirstSubmit()" nbButton nbStepperNext [disabled]="companyForm.invalid">next</button>
+                   
+                </form>
+              </nb-step>
+              <nb-step [stepControl]="secondForm" label="Second step">
+                <form [formGroup]="secondForm"  class="step-container">
+                  <p class="lorem">
+                   <strong> Please enter Company Card details.</strong> 
+                  </p>
+                  <div id="card-element" #cardElement></div>
+                  <div id="card-errors" class="help is-danger" role="alert" *ngIf="formError">{{ formError }}</div>
+                  <button (click)="onSecondSubmit()"  class="button is-info" [disabled]="!formComplete || loading" [class.is-loading]="loading"> Save Card
+                  </button>
+                  <!-- <div *ngIf="result?.error" class="notification is-danger">
+                    {{ result.error?.message }}
+                </div>  -->
+                  <div class='mt-5'>
+                  <button nbButton nbStepperPrevious>prev</button>
+                  <button nbButton nbStepperNext>Next</button>
+                </div>
+                </form>
+              </nb-step>
+              <!-- <nb-step [stepControl]="thirdForm" label="Third step">
+                <form [formGroup]="thirdForm" (ngSubmit)="onThirdSubmit()" class="step-container">
+                  <p class="lorem">
+                    Things boom shackalack rhoncus yo. In fo shizzle my nizzle gangsta platea dictumst. Check it out pot.
+                  </p>
+                  <div class="input-group">
+                    <input type="text" placeholder="Enter something" class="form-control" formControlName="thirdCtrl"
+                           [ngClass]="{'form-control-danger': thirdForm.invalid && (thirdForm.dirty || thirdForm.touched)}">
                   </div>
-                  </form>
-                </nb-step>
-                <!-- <nb-step [stepControl]="thirdForm" label="Third step">
-                  <form [formGroup]="thirdForm" (ngSubmit)="onThirdSubmit()" class="step-container">
-                    <p class="lorem">
-                      Things boom shackalack rhoncus yo. In fo shizzle my nizzle gangsta platea dictumst. Check it out pot.
-                    </p>
-                    <div class="input-group">
-                      <input type="text" placeholder="Enter something" class="form-control" formControlName="thirdCtrl"
-                             [ngClass]="{'form-control-danger': thirdForm.invalid && (thirdForm.dirty || thirdForm.touched)}">
-                    </div>
-                    <button nbButton nbStepperPrevious>prev</button>
-                    <button nbButton nbStepperNext>Confirm</button>
-                  </form>
-                </nb-step> -->
-                <nb-step [stepControl]="secondForm" [hidden]="true" label="Second step">
-                  <div class="step-container">
-                    <h3>Thanks, You can now add Users!</h3>
-                    <button nbButton (click)="dnavigate()">Done!</button>
-                  </div>
-                </nb-step>
-              </nb-stepper>
-            </nb-card-body>
-          </nb-card>
-      </div>
+                  <button nbButton nbStepperPrevious>prev</button>
+                  <button nbButton nbStepperNext>Confirm</button>
+                </form>
+              </nb-step> -->
+              <nb-step [stepControl]="secondForm" [hidden]="true" label="Second step">
+                <div class="step-container">
+                  <h3>Thanks, You can now add Users!</h3>
+                  <button nbButton (click)="dnavigate()">Done!</button>
+                </div>
+              </nb-step>
+            </nb-stepper>
+          </nb-card-body>
+        </nb-card>
+    </div>
 
-  </div>
+</div>

@@ -17,7 +17,7 @@ import { Charge, Source } from './models';
 @Component({
   selector: 'payment',
   templateUrl: './payment.component.html',
-  styleUrls: ['./payment.component.sass']
+ // styleUrls: ['./payment.component.sass']
 })
 export class PaymentComponent implements AfterViewInit, OnDestroy {
 

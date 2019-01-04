@@ -23,25 +23,35 @@ export function authenticateUser(req, res, next): void {
 }
 
 // Returns the user document data from Firestore
-export async function getUser(userId: string): Promise<any> {
-    return await db.collection('users').doc(userId).get().then(doc => doc.data());
+export async function getUser(userId: string,  companyData: any ): Promise<any> {
+    return await db.collection('company').doc(companyData.UID).collection('users').doc(userId).get().then(doc => doc.data());
 }
 
+export async function getComp(companyData: any ): Promise<any> {
+    return await db.collection('company').doc(companyData.UID).get().then(doc => doc.data());
+}
 // Takes a Firebase user and creates a Stripe customer account
-export async function createCustomer(firebaseUser: any): Promise<any> {
-        
-    return await stripe.customers.create({
-        email: firebaseUser.email,
-        metadata: { firebaseUID: firebaseUser.uid, name: firebaseUser.name, company: firebaseUser.company, tax_info: firebaseUser.VAT }
+export async function createCustomer(userId: string, companyData: any): Promise<any> {
+
+    const userData = await getUser(userId, companyData);
+    const compRef = db.collection('company').doc(companyData.UID);
+
+    let customer = await stripe.customers.create({
+        email: userData.email,
+        metadata: { firebaseUID: companyData.UID, name: companyData.name, tax_info: companyData.VAT }
     })
     
+    if(customer) {
+        const data = { stripeCustomerId: customer.id };
+          return compRef.set(data, { merge: true });
+    }
 }
 
 
-export async function getCustomer(userId: string): Promise<any> {
+export async function getCustomer(userId: string, companyData: any): Promise<any> {
     
-    const user       = await getUser(userId);
-    const customerId = user.stripeCustomerId;
+    const comp       = await getComp(companyData);
+    const customerId = comp.stripeCustomerId;
 
     return await stripe.customers.retrieve(customerId);
 }
@@ -50,9 +60,9 @@ export async function getCustomer(userId: string): Promise<any> {
 /////  CHARGES and SOURCES ///////
     
 // Looks for payment source attached to user, otherwise it creates it. 
-export async function attachSource(userId: string, sourceId: string): Promise<any> {
+export async function attachSource(userId: string, sourceId: string,  companyData: any): Promise<any> {
 
-    const customer = await getCustomer(userId);
+    const customer = await getCustomer(userId, companyData);
 
     const existingSource = customer.sources.data.filter(source => source.id === sourceId).pop() 
 
@@ -66,12 +76,12 @@ export async function attachSource(userId: string, sourceId: string): Promise<an
 
 
 // Charges customer with supplied source and amount 
-export async function createCharge(userId: string, sourceId: string, amount: number, currency? :string): Promise<any> {
+export async function createCharge(userId: string, sourceId: string, amount: number, companyData:any, currency? :string, ): Promise<any> {
 
-    const user       = await getUser(userId);
+    const user       = await getUser(userId, companyData);
     const customerId = user.stripeCustomerId;
 
-    const card       = await attachSource(userId, sourceId)
+    const card       = await attachSource(userId, sourceId, companyData)
     
     return await stripe.charges.create({
         amount: amount,
@@ -96,9 +106,9 @@ export async function createCustCharge(desc: string, custId: string, amount: num
 /////  RETRIEVE DATA from STRIPE ///////
 
 // Returns all charges associated with a user/customer
-export async function getUserCharges(userId: string, limit?: number): Promise<any> {
+export async function getUserCharges(userId: string, companyData:any, limit?: number): Promise<any> {
     
-    const user       = await getUser(userId);
+    const user       = await getUser(userId, companyData);
     const customerId = user.stripeCustomerId;
 
     return await stripe.charges.list({ 
@@ -111,13 +121,13 @@ export async function getUserCharges(userId: string, limit?: number): Promise<an
 
 
 // Creates a subscription
-export async function createSubscription(userId:string, sourceId:string, planId: string): Promise<any> {
+export async function createSubscription(userId:string, companyData:any, sourceId:string, planId: string): Promise<any> {
 
  
-    const user       = await getUser(userId);
+    const user       = await getUser(userId, companyData);
     const customerId = user.stripeCustomerId;
 
-    const card       = await attachSource(userId, sourceId)
+    const card       = await attachSource(userId, sourceId, companyData)
 
     const subscription = await stripe.subscriptions.create({
         customer: customerId,
@@ -138,9 +148,9 @@ export async function createSubscription(userId:string, sourceId:string, planId:
     return subscription;
 }
 
-export async function orderTicket(userId: string, amount: number, ticketType: string): Promise<any> {
+export async function orderTicket(userId: string, amount: number, ticketType: string, companyData:any): Promise<any> {
     
-    const user       = await getUser(userId);
+    const user       = await getUser(userId, companyData);
     const customerId = user.stripeCustomerId;
 
     const charge = await createCustCharge( ticketType, customerId, amount);
@@ -149,9 +159,9 @@ export async function orderTicket(userId: string, amount: number, ticketType: st
 }
 
 // Cancel/pause a subscription
-export async function cancelSubscription(userId: string, planId: string): Promise<any> {
+export async function cancelSubscription(userId: string, planId: string, companyData: any): Promise<any> {
 
-    const subscription   = await getSubscription(userId, planId);
+    const subscription   = await getSubscription(userId, planId, companyData);
 
     let cancellation; 
 
@@ -197,8 +207,8 @@ export async function recurringPayment(customerId: string, planId: string, hook:
 }
 
 
-export async function getSubscription(userId: string, planId: string): Promise<any> {
-    const user       = await getUser(userId)
+export async function getSubscription(userId: string, planId: string,  companyData: any): Promise<any> {
+    const user       = await getUser(userId, companyData)
     const customer   = user.stripeCustomerId
 
     const stripeSubs     = await stripe.subscriptions.list({ customer, plan: planId })

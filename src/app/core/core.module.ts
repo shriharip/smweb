@@ -7,8 +7,7 @@ import { of as observableOf } from 'rxjs';
 import { throwIfAlreadyLoaded } from './module-import.guard';
 import { DataModule } from './data/data.module';
 
-import { TokenInterceptor } from './token.interceptor';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
 
 // const socialLinks = [
 //   {
@@ -74,7 +73,7 @@ export const NB_CORE_PROVIDERS = [
           maxLenght: 42,
         },
         company: {
-          required: false,
+          required: true,
           minLength: 3,
           maxLength: 42,
         }
@@ -98,8 +97,7 @@ export const NB_CORE_PROVIDERS = [
 
   {
     provide: NbRoleProvider, useClass: NbSimpleRoleProvider, 
-    },
-  {  provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    }
   //AnalyticsService, https://github.com/GianlucaRi/ngx-admin/blob/master/src/app/%40core/core.module.ts
   
 ];

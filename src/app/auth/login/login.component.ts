@@ -30,22 +30,30 @@ export class LoginComponent {
     this.validation = this.getConfigValue('forms.validation');
   }
 
-  loginEmail() {
+  loginEmail = async () => {
     this.errors = this.messages = [];
     this.submitted = true;
 
-    this.auth.signInWithEmail(this.user.email, this.user.password)
-      .then((res) => {
-        this.submitted = false;
-       // this.messages = [res.additionalUserInfo.];
-
-        this.redirectToDashboard()
+    try {
+      let res = await this.auth.signInWithEmail(this.user.email, this.user.password);
+      if (res) this.submitted = false;
+      this.messages = [];
+      this.auth.user.subscribe((data)=> {
+        if(!data.isOnBoarded){ 
+        let isOnBoarded = localStorage.getItem("isOnBoarded");
+         if (!isOnBoarded) {
+           localStorage.setItem("isOnBoarded", "false")
+          }
+          this.router.navigate(['pages/onboard']);            
+        }else{
+         this.router.navigate(['/pages/dashboard']);
+        }
       })
-      .catch((err) => {
-        this.submitted = false;
+       } catch (err) {
+      this.submitted = false;
         this.errors = [err];
-      });
-  }
+    }
+   }
   
   // loginSocial(name) {
   //   if (name === "google") {
@@ -76,11 +84,6 @@ export class LoginComponent {
   //       this.errors = [err];
   //     });
   // }
-
-  redirectToDashboard(){
-    this.router.navigate(['/pages/dashboard']);
-   
-  }
 
   getConfigValue(key: string): any {
     return getDeepFromObject(this.config, key, null);

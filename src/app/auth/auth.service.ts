@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -29,10 +29,14 @@ export class AuthService {
 
  this.account$ = this.afAuth.authState;
       //// Get auth data, then get firestore user document || null
+      // using company name for display name as displayName will not be enabled on UI and we can use that to create a unique company id
       this.user = this.afAuth.authState.pipe(
         switchMap(user => {
-          if (user) {
-            return this.afs.doc<User>(`users/${user.uid}`).valueChanges()
+         if (user && user.displayName) {
+            let compId:string = '';
+
+         compId = user.displayName.charCodeAt(0) + user.displayName.charCodeAt(1) + user.uid;
+            return this.afs.doc<User>(`company/${compId}/users/${user.uid}`).valueChanges()
           } else {
             return of(null)
           }
@@ -66,7 +70,7 @@ export class AuthService {
         (afUser: firebase.auth.UserCredential) => {
           // Update the profile in firebase auth
           afUser.user.updateProfile({
-            displayName: fullName,
+            displayName: company,
             photoURL: ""
           });
           // Create the user in firestore
@@ -76,7 +80,9 @@ export class AuthService {
           this.user['email'] = afUser.user.email;
           this.user['photoURL'] = afUser.user.photoURL;
           this.user['role'] = 'admin'; 
+          this.user['isOnBoarded'] = false;
           this.updateUserData(this.user);
+          return afUser.user;
         });
   }
 
@@ -99,17 +105,32 @@ export class AuthService {
 
 
     // Sets user data to firestore on login
-  private updateUserData(user) {
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+  updateUserData = async (user) => {
+    let compId:string = '';
+   
+     compId = user.company.charCodeAt(0) + user.company.charCodeAt(1) + user.uid
+   
+    const createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    const updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+    const compRef: AngularFirestoreDocument<any> = this.afs.doc(`company/${compId}`);
+    let cdata = { 
+      companyName: user.company, 
+      createdAt: createdAt, 
+      updatedAt: updatedAt
+    } 
+    await compRef.set( cdata, { merge: true});
     const data: User = {
       uid: user.uid,
       email: user.email || null,
-      displayName: user.displayName || null,
+     // displayName: user.displayName || null,
       photoURL: user.photoURL || null,
       company: user.company || null,
-      role: user.role || 'employee'
+      role: user.role || 'employee',
+      isOnBoarded: user.isOnBoarded, 
+      createdAt: createdAt, 
+      updatedAt: updatedAt
     }
-    return userRef.set(data, { merge: true })
+    return this.afs.doc(`company/${compId}/users/${user.uid}`).set(data, { merge: true })
   }
 
   signOut() {

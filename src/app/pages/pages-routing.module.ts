@@ -18,7 +18,7 @@ const routes: Routes = [{
     path: 'users',
     component: UsersComponent,
   },{ 
-    path: 'onboard/:uid', 
+    path: 'onboard', 
     component: OnboardComponent 
   }, 
    {
