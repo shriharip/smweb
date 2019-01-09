@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "simplemobility-2810"
+  },
+  "targets": {
+    "simplemobility-2810": {
+      "hosting": {
+        "simplemobility-dashboard": [
+          "dashboard"
+        ]
+      }
+    }
   }
 }

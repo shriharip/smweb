@@ -56,7 +56,7 @@ redirectToOnboard() {
 //   }
 // })
 let isOnBoarded = localStorage.getItem("isOnBoarded");
-if(isOnBoarded && isOnBoarded == 'false') this.router.navigate(['pages/onboard'])
+if(isOnBoarded) this.router.navigate(['pages/onboard'])
 }
 
 ngAfterViewInit(): void {

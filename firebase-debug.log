@@ -1,0 +1,80 @@
+[debug] [2019-01-09T10:58:58.136Z] ----------------------------------------------------------------------
+[debug] [2019-01-09T10:58:58.139Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy --only hosting --debug
+[debug] [2019-01-09T10:58:58.140Z] CLI Version:   6.2.2
+[debug] [2019-01-09T10:58:58.140Z] Platform:      darwin
+[debug] [2019-01-09T10:58:58.140Z] Node Version:  v11.2.0
+[debug] [2019-01-09T10:58:58.147Z] Time:          Wed Jan 09 2019 11:58:58 GMT+0100 (Central European Standard Time)
+[debug] [2019-01-09T10:58:58.148Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-01-09T10:58:58.165Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-01-09T10:58:58.165Z] > authorizing via signed-in user
+[debug] [2019-01-09T10:58:58.165Z] [iam] checking project simplemobility-2810 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-01-09T10:58:58.167Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-01-09T10:58:58.167Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-01-09T10:58:58.439Z] <<< HTTP RESPONSE 200
+[debug] [2019-01-09T10:58:58.446Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/simplemobility-2810:testIamPermissions  
+
+[debug] [2019-01-09T10:58:59.494Z] <<< HTTP RESPONSE 200
+[debug] [2019-01-09T10:58:59.499Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/simplemobility-2810  
+ 
+[debug] [2019-01-09T10:58:59.902Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'simplemobility-2810'...
+[info] 
+[info] i  deploying hosting
+[debug] [2019-01-09T10:59:02.341Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/dashboard/versions  
+
+[debug] [2019-01-09T10:59:03.462Z] <<< HTTP RESPONSE 404
+[debug] [2019-01-09T10:59:03.462Z] <<< HTTP RESPONSE BODY
+[error] 
+[error] Error: HTTP Error: 404, Requested entity was not found.
+[debug] [2019-01-09T10:59:03.653Z] Error Context: {
+  "body": {
+    "error": {
+      "code": 404,
+      "message": "Requested entity was not found.",
+      "status": "NOT_FOUND"
+    }
+  },
+  "response": {
+    "statusCode": 404,
+    "body": {
+      "error": {
+        "code": 404,
+        "message": "Requested entity was not found.",
+        "status": "NOT_FOUND"
+      }
+    },
+    "headers": {
+      "vary": "X-Origin, Referer, Origin,Accept-Encoding",
+      "content-type": "application/json; charset=UTF-8",
+      "date": "Wed, 09 Jan 2019 10:59:03 GMT",
+      "server": "ESF",
+      "cache-control": "private",
+      "x-xss-protection": "1; mode=block",
+      "x-frame-options": "SAMEORIGIN",
+      "x-content-type-options": "nosniff",
+      "alt-svc": "quic=\":443\"; ma=2592000; v=\"44,43,39,35\"",
+      "accept-ranges": "none",
+      "connection": "close"
+    },
+    "request": {
+      "uri": {
+        "protocol": "https:",
+        "slashes": true,
+        "auth": null,
+        "host": "firebasehosting.googleapis.com",
+        "port": 443,
+        "hostname": "firebasehosting.googleapis.com",
+        "hash": null,
+        "search": null,
+        "query": null,
+        "pathname": "/v1beta1/sites/dashboard/versions",
+        "path": "/v1beta1/sites/dashboard/versions",
+        "href": "https://firebasehosting.googleapis.com/v1beta1/sites/dashboard/versions"
+      },
+      "method": "POST"
+    }
+  }
+}

@@ -39,14 +39,18 @@ export class LoginComponent {
       if (res) this.submitted = false;
       this.messages = [];
       this.auth.user.subscribe((data)=> {
-        if(!data.isOnBoarded){ 
-        let isOnBoarded = localStorage.getItem("isOnBoarded");
-         if (!isOnBoarded) {
-           localStorage.setItem("isOnBoarded", "false")
+       if(data.role == 'admin'){ 
+          if(!data.isOnBoarded){ 
+          let isOnBoarded = localStorage.getItem("isOnBoarded");
+           if (!isOnBoarded) {
+             localStorage.setItem("isOnBoarded", "false")
+            }
+            this.router.navigate(['pages/onboard']);            
+          }else{
+           this.router.navigate(['/pages/dashboard']);
           }
-          this.router.navigate(['pages/onboard']);            
-        }else{
-         this.router.navigate(['/pages/dashboard']);
+        } else{
+          this.errors.push('You are not set as admin to manage this account')
         }
       })
        } catch (err) {

@@ -41,7 +41,8 @@ admin.initializeApp({
 export const db     = admin.firestore();
 export const auth   = admin.auth();
 
-
+const settings = {/* your settings... */ timestampsInSnapshots: true};
+  db.settings(settings);
 //// Initalize Stripe NodeJS SDK ////
 
 import * as Stripe from 'stripe'; 
@@ -51,6 +52,8 @@ import * as Stripe from 'stripe';
 // export const stripePublishable  = functions.config().stripe.publishable;
 // export const stripeClientId     = functions.config().stripe.clientid; // only used for stripe connect
 
+export const gmailAccount = serviceAccount.gmail;
+export const gmailPassword = serviceAccount.gmailPassword;
 
 export const stripeSecret       = serviceAccount.stripe.secret;
 export const stripePublishable  = serviceAccount.stripe.publishable;

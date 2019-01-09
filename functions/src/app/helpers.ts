@@ -1,5 +1,5 @@
 import { stripe, db, auth } from './config';
-
+import * as rp from 'request-promise';
 
 /////  USER MANAGEMENT ///////
 
@@ -36,15 +36,27 @@ export async function createCustomer(userId: string, companyData: any): Promise<
     const userData = await getUser(userId, companyData);
     const compRef = db.collection('company').doc(companyData.UID);
 
-    let customer = await stripe.customers.create({
+    if(!companyData.stripeCustomerId) {
+        try {
+            let customer = await stripe.customers.create({
+                email: userData.email,
+                metadata: { firebaseUID: companyData.UID, name: companyData.name, tax_info: companyData.VAT }
+            })
+            
+            if(customer) {
+                const data = { stripeCustomerId: customer.id };
+                  return compRef.set(data, { merge: true });
+            }
+        } catch (error) {
+                return error;
+        } 
+    
+} else{
+  return await stripe.customers.update(companyData.stripeCustomerId , {
         email: userData.email,
         metadata: { firebaseUID: companyData.UID, name: companyData.name, tax_info: companyData.VAT }
     })
-    
-    if(customer) {
-        const data = { stripeCustomerId: customer.id };
-          return compRef.set(data, { merge: true });
-    }
+}
 }
 
 
@@ -70,24 +82,35 @@ export async function attachSource(userId: string, sourceId: string,  companyDat
         return existingSource;
     } 
     else {
-        return await stripe.customers.createSource(customer.id, { source: sourceId });
+        try {
+            let success =  await stripe.customers.createSource(customer.id, { source: sourceId });
+            if(success) {
+                const compRef = db.collection('company').doc(companyData.UID);
+                const data = { stripeSourceId: sourceId };
+                  return compRef.set(data, { merge: true });
+            }
+        } catch (error) {
+                return error;
+        }
+        
     }
 }
 
 
 // Charges customer with supplied source and amount 
-export async function createCharge(userId: string, sourceId: string, amount: number, companyData:any, currency? :string, ): Promise<any> {
+export async function createCharge(sourceId: string, amount: number, customerId:String, tripId:String, currency? :string, ): Promise<any> {
 
-    const user       = await getUser(userId, companyData);
-    const customerId = user.stripeCustomerId;
+    // const user       = await getUser(userId, companyData);
+    // const customerId = user.stripeCustomerId;
 
-    const card       = await attachSource(userId, sourceId, companyData)
+    // const card       = await attachSource(userId, sourceId, companyData)
     
     return await stripe.charges.create({
         amount: amount,
-        currency: currency || 'usd',
+        currency: currency || 'EUR',
         customer: customerId,
-        source: sourceId
+        source: sourceId,
+        description: tripId
     })
 }
 
@@ -148,14 +171,38 @@ export async function createSubscription(userId:string, companyData:any, sourceI
     return subscription;
 }
 
-export async function orderTicket(userId: string, amount: number, ticketType: string, companyData:any): Promise<any> {
+export async function orderTicket(userId: string, compId: string, amount: number, tripId: string, phoneNumber:string, ticketType:string): Promise<any> {
+    console.log(compId, 'compId info')
+    const compData =  await db.collection('company').doc(compId).get().then(doc => doc.data());
+
+        console.log(compData.stripeSourceId, amount, compData.stripeCustomerId, tripId)
+        const charge = await createCharge( compData.stripeSourceId, amount, compData.stripeCustomerId, tripId );
     
-    const user       = await getUser(userId, companyData);
-    const customerId = user.stripeCustomerId;
-
-    const charge = await createCustCharge( ticketType, customerId, amount);
-
-    return charge; 
+        if(charge) {
+            console.log(charge, 'charge data')
+            let options = {
+                method: 'POST',
+                uri: 'https://sales-api.hsl.fi/api/sandbox/ticket/v3/order',
+                headers: {
+                    'X-API-Key': 'bfcb0dbf-026f-4c32-9b00-e483f04a8682'
+                },
+                body: {
+    
+                        "phoneNumber": phoneNumber,
+                        "ticketTypeId": "single",
+                        "customerTypeId": "adult",
+                        "regionId": "regional"
+                      
+                },
+                json: true // Automatically stringifies the body to JSON
+            };
+    
+            return await rp.post(options);
+        }
+        
+    
+    //console.log(userComp)
+  
 }
 
 // Cancel/pause a subscription
@@ -206,6 +253,11 @@ export async function recurringPayment(customerId: string, planId: string, hook:
     return await db.doc(`users/${userId}`).set({ subscriptions }, { merge: true });
 }
 
+export async function getCompanyFromUser(userId: string): Promise<any> {
+
+    let user = await auth.getUser(userId);
+    return await db.collection('users').where( 'email', '==', user.email).get();
+ }
 
 export async function getSubscription(userId: string, planId: string,  companyData: any): Promise<any> {
     const user       = await getUser(userId, companyData)

@@ -6,30 +6,39 @@
             <nb-stepper #stepper orientation='horizontal' class='horizontal'>
               <nb-step [stepControl]="companyForm" label="First step">
                 <form [formGroup]="companyForm"  class="step-container">
-                  <p class="lorem">What is your Company Registration Number?</p>
-                  <div class="input-group input-group-sm">
-                       <input type="text" placeholder="Registration number" aria-label="Registration Number" aria-describedby="cbutton" class="form-control" formControlName="id"
-                           [ngClass]="{'form-control-danger': companyForm.controls.id.invalid && (companyForm.controls.id.dirty || companyForm.controls.id.touched)}">
-                           <div class="input-group-append">
-                           <!-- <button class="btn btn-outline-secondary" type="button" id="cbutton" (click)="getCompany()">Submit</button> -->
-                          </div> 
-                          </div>  
-                 
-                    <!-- <p>Please Confirm if below information is correct? If not, make changes.</p> -->
+
+                    <div style="margin-bottom: 7%">
+                      <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Company Name</span>
+                    </div>
+                    <input type="text" placeholder="Company Name" class="form-control" formControlName="name"
+                    [ngClass]="{'form-control-danger': companyForm.controls.name.invalid && (companyForm.controls.name.dirty || companyForm.controls.name.touched)}">
+                    </div>
+                  </div>
+                
+                  <div style="margin-bottom: 3%">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
-                          <span class="input-group-text" id="inputGroup-sizing-sm">Company Name</span>
-                        </div>
-                    <input type="text" placeholder="Company Name" class="form-control" formControlName="name"
-                           [ngClass]="{'form-control-danger': companyForm.controls.name.invalid && (companyForm.controls.name.dirty || companyForm.controls.name.touched)}">
-                      </div>
-                      <div class="input-group input-group-sm">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Company Address</span>
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Company Registration Number</span>
                           </div>
-                           <input type='text' placeholder="Company Address" class="form-control" formControlName="address"
-                           [ngClass]="{'form-control-danger': companyForm.controls.address.invalid && (companyForm.controls.address.dirty || companyForm.controls.address.touched)}">
-                        </div>   
+                         <input type="text" placeholder="Registration number" aria-label="Registration Number" aria-describedby="cbutton" class="form-control" formControlName="id"
+                             [ngClass]="{'form-control-danger': companyForm.controls.id.invalid && (companyForm.controls.id.dirty || companyForm.controls.id.touched)}">
+                             <div class="input-group-append">
+                             <!-- <button class="btn btn-outline-secondary" type="button" id="cbutton" (click)="getCompany()">Submit</button> -->
+                            </div> 
+                            </div>  
+                   
+                      <!-- <p>Please Confirm if below information is correct? If not, make changes.</p> -->
+                     
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroup-sizing-sm">Company Address</span>
+                            </div>
+                             <input type='text' placeholder="Company Address" class="form-control" formControlName="address"
+                             [ngClass]="{'form-control-danger': companyForm.controls.address.invalid && (companyForm.controls.address.dirty || companyForm.controls.address.touched)}">
+                          </div>   
+                  </div>
                      <button (click)="onFirstSubmit()" nbButton nbStepperNext [disabled]="companyForm.invalid">next</button>
                    
                 </form>
@@ -43,12 +52,12 @@
                   <div id="card-errors" class="help is-danger" role="alert" *ngIf="formError">{{ formError }}</div>
                   <button (click)="onSecondSubmit()"  class="button is-info" [disabled]="!formComplete || loading" [class.is-loading]="loading"> Save Card
                   </button>
-                  <!-- <div *ngIf="result?.error" class="notification is-danger">
-                    {{ result.error?.message }}
-                </div>  -->
+                  <div *ngIf="result" class="notification is-danger">
+                    {{ result }}
+                </div>
                   <div class='mt-5'>
                   <button nbButton nbStepperPrevious>prev</button>
-                  <button nbButton nbStepperNext>Next</button>
+                  <button nbButton nbStepperNext [disabled]="!showLastStep">Next</button>
                 </div>
                 </form>
               </nb-step>
@@ -67,7 +76,7 @@
               </nb-step> -->
               <nb-step [stepControl]="secondForm" [hidden]="true" label="Second step">
                 <div class="step-container">
-                  <h3>Thanks, You can now add Users!</h3>
+                  <h3>Thanks, OnBoarding complete!</h3>
                   <button nbButton (click)="dnavigate()">Done!</button>
                 </div>
               </nb-step>

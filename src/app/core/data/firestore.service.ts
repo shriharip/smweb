@@ -75,9 +75,9 @@ users = [];
 
   // get users for table and more
 
-  getUsers = () =>{
+  getUsers = (compId) =>{
 
-   return this.afs.collection('users', ref => ref.where('role', '==', 'employee') ).valueChanges();
+   return this.afs.collection('users', ref => ref.where('compId', '==', compId) ).valueChanges();
 
   }
 

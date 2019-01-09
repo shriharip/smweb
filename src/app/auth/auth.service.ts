@@ -33,10 +33,7 @@ export class AuthService {
       this.user = this.afAuth.authState.pipe(
         switchMap(user => {
          if (user && user.displayName) {
-            let compId:string = '';
-
-         compId = user.displayName.charCodeAt(0) + user.displayName.charCodeAt(1) + user.uid;
-            return this.afs.doc<User>(`company/${compId}/users/${user.uid}`).valueChanges()
+          return this.afs.doc<User>(`company/${user.displayName}/users/${user.uid}`).valueChanges()
           } else {
             return of(null)
           }
@@ -69,13 +66,14 @@ export class AuthService {
       .then(
         (afUser: firebase.auth.UserCredential) => {
           // Update the profile in firebase auth
+         let compId = company.charCodeAt(0) + company.charCodeAt(1) + afUser.user.uid;
           afUser.user.updateProfile({
-            displayName: company,
+            displayName: compId,
             photoURL: ""
           });
           // Create the user in firestore
           this.user['uid'] = afUser.user.uid;
-          this.user['displayName'] = afUser.user.displayName;
+          this.user['displayName'] = fullName;
           this.user['company'] = company;
           this.user['email'] = afUser.user.email;
           this.user['photoURL'] = afUser.user.photoURL;
@@ -122,10 +120,10 @@ export class AuthService {
     const data: User = {
       uid: user.uid,
       email: user.email || null,
-     // displayName: user.displayName || null,
+      displayName: user.displayName || null,
       photoURL: user.photoURL || null,
       company: user.company || null,
-      role: user.role || 'employee',
+      role: user.role || 'other',
       isOnBoarded: user.isOnBoarded, 
       createdAt: createdAt, 
       updatedAt: updatedAt

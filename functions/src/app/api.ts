@@ -74,10 +74,12 @@ app.post('/order', (req, res) => {
     
     const userId   = req.user.uid; 
     const ticketType   = req.body.ticketType;
+    const tripId = req.body.tripId;
+    const phoneNumber  = req.body.phoneNumber;
     const amount = req.body.amount;
-    const companyData  = req.body.companyRef;
+    const compId = req.body.compId;
 
-    const promise = helpers.orderTicket(userId, amount, ticketType, companyData);
+    const promise = helpers.orderTicket(userId, compId, amount, tripId, phoneNumber, ticketType);
 
     defaultHandler(promise, res)
 });

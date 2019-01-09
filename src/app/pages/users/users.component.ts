@@ -34,37 +34,29 @@ users = [];
     },
     columns: {
      
-      firstName: {
-        title: 'First Name',
-        type: 'string',
-      },
-      lastName: {
-        title: 'Last Name',
+      fullName: {
+        title: 'FullName',
         type: 'string',
       },
       email: {
-        title: 'E-mail',
+        title: 'Email',
         type: 'string',
-      }, 
-      onboard: {
-        title: 'onboard',
-        type: 'string',
-      },   
-      role: {
-        title: 'Role',
-        type: 'string',
-      }, 
-  }
+      },
+      }
 };
   source: LocalDataSource = new LocalDataSource();
   
+  compId: string;
 
   constructor(private db: DbService) {
+    let uid = localStorage.getItem("user");
+    let displayName = localStorage.getItem("displayName");
+    this.compId = displayName.charCodeAt(0) + displayName.charCodeAt(1) + uid;
    this.getData();  
   }
 
  getData = () => {
-    this.db.getUsers().subscribe(data => {
+    this.db.getUsers(this.compId).subscribe(data => {
       this.source.load(data);
         })
 
@@ -80,8 +72,10 @@ users = [];
   }
 
   onCreateConfirm(event): void {
-   this.db.updateAt(`users/asdfsa2134234sddf234sgd`, event.newData, true )
-    event.confirm.resolve();
+    event.newData.send = true
+     event.newData.compId = this.compId
+   this.db.updateAt('users', event.newData, true )
+   event.confirm.resolve();
     console.log(event)
   }
 }
